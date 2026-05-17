@@ -1,0 +1,15 @@
+# Python compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+
+# macOS system files
+.DS_Store
+
+# Local cleaner tool state and isolated files
+dataset_cleaner_state.json
+dataset/peas_removed/
