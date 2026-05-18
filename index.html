@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeggieSense — AI Vegetable Classifier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* ===== Forest Emerald Theme ===== */
+    
+      --green-deep:   #0B2E26;   /* Dark forest green */
+      --green-mid:    #145A4A;   /* Rich emerald */
+      --green-vivid:  #1FA37A;   /* Vibrant green-teal */
+      --green-light:  #6FD6B2;   /* Soft mint */
+      --green-pale:   #C9F3E6;   /* Very light mint */
+      --green-wash:   #F2FCF8;   /* Background wash */
+      --cream:        #FCFEFD;   /* Page background */
+    
+      --text-main:    #0B2E26;
+      --text-soft:    #2D6F5C;
+      --text-muted:   #7AAE9B;
+    
+      --border:       rgba(31, 163, 122, 0.18);
+    
+      --shadow-sm:    0 2px 6px rgba(11, 46, 38, 0.06);
+      --shadow-md:    0 8px 24px rgba(11, 46, 38, 0.10);
+    
+      --r-sm: 8px;
+      --r-md: 12px;
+      --r-lg: 18px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+    .brand-icon {
+      width: 36px; height: 36px;
+      background: var(--green-wash);
+      border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .brand-name { font-size: 15px; font-weight: 600; color: var(--green-deep); }
+    .brand-tag  { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+    .nav-links  { display: flex; gap: 24px; }
+    .nav-links a { font-size: 13px; color: var(--text-soft); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--green-vivid); }
+    .nav-cta {
+      background: var(--green-mid);
+      color: var(--green-pale);
+      font-size: 12px; font-weight: 500;
+      padding: 7px 16px;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .nav-cta:hover { background: var(--green-deep); }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #EAF4FF 0%, #D8F3DC 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 32px 36px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--green-pale);
+      color: var(--green-deep);
+      font-size: 11px; font-weight: 500;
+      padding: 4px 11px;
+      border-radius: 50px;
+      margin-bottom: 14px;
+    }
+    .hero-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 32px;
+      color: var(--green-deep);
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .hero-sub {
+      font-size: 14px;
+      color: var(--text-soft);
+      line-height: 1.65;
+      max-width: 360px;
+      margin-bottom: 22px;
+    }
+    .hero-btns { display: flex; gap: 10px; }
+    .btn-solid {
+      background: var(--green-mid);
+      color: var(--green-wash);
+      font-size: 13px; font-weight: 500;
+      padding: 9px 18px;
+      border-radius: var(--r-sm);
+      display: flex; align-items: center; gap: 6px;
+      cursor: pointer;
+      border: none;
+      transition: background .2s, transform .15s;
+    }
+    .btn-solid:hover { background: var(--green-deep); transform: translateY(-1px); }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--green-vivid);
+      color: var(--green-mid);
+      font-size: 13px; font-weight: 500;
+      padding: 9px 18px;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .btn-ghost:hover { background: rgba(99,153,34,.08); }
+
+    .hero-stats { display: flex; flex-direction: column; gap: 10px; min-width: 130px; }
+    .stat-card {
+      background: #fff;
+      border-radius: var(--r-md);
+      padding: 14px 16px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+    .stat-num { font-size: 22px; font-weight: 600; color: var(--green-mid); }
+    .stat-lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ── MAIN BODY ── */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 28px 24px;
+    }
+
+    /* ── TWO-COL GRID ── */
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
+
+    /* ── CARD ── */
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .card-head {
+      padding: 15px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .card-head-icon { color: var(--green-vivid); font-size: 17px; }
+    .card-title { font-size: 14px; font-weight: 600; color: var(--text-main); }
+    .card-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+    .card-body { padding: 18px; }
+
+    /* ── TABS ── */
+    .tabs { display: flex; border-bottom: 1px solid var(--border); }
+    .tab {
+      flex: 1;
+      padding: 11px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: color .2s, border-color .2s;
+      user-select: none;
+    }
+    .tab.active { color: var(--green-mid); border-bottom-color: var(--green-vivid); }
+    .tab:hover:not(.active) { color: var(--text-soft); }
+
+    /* ── DROP ZONE ── */
+    .dropzone {
+      border: 2px dashed var(--green-pale);
+      border-radius: var(--r-md);
+      padding: 32px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      margin-bottom: 14px;
+    }
+    .dropzone:hover, .dropzone.drag-over {
+      border-color: var(--green-vivid);
+      background: var(--green-wash);
+    }
+    .drop-icon {
+      width: 46px; height: 46px;
+      background: var(--green-wash);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 12px;
+    }
+    .drop-title { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+    .drop-hint  { font-size: 11px; color: var(--text-muted); }
+
+    /* ── CAMERA PANEL ── */
+    .camera-panel { display: none; }
+    .camera-panel.visible { display: block; }
+    #videoEl {
+      width: 100%;
+      border-radius: var(--r-md);
+      background: #000;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      margin-bottom: 12px;
+    }
+    .cam-btn {
+      width: 100%;
+      background: var(--green-vivid);
+      color: #fff;
+      border: none;
+      border-radius: var(--r-md);
+      padding: 11px;
+      font-size: 13px; font-weight: 500;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      cursor: pointer;
+      transition: background .2s;
+      margin-bottom: 8px;
+    }
+    .cam-btn:hover { background: var(--green-mid); }
+
+    /* ── PREVIEW ── */
+    .preview-row {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 10px 12px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .preview-row.visible { display: flex; }
+    .preview-thumb {
+      width: 46px; height: 46px;
+      background: var(--green-pale);
+      border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .preview-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--r-sm); }
+    .preview-name { font-size: 12px; font-weight: 500; color: var(--text-main); }
+    .preview-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .preview-clear {
+      margin-left: auto;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 15px;
+      transition: color .15s;
+    }
+    .preview-clear:hover { color: #c0392b; }
+
+    /* ── ANALYSE BTN ── */
+    .analyse-btn {
+      background: var(--green-mid);
+      color: var(--green-wash);
+      border: none;
+      border-radius: var(--r-md);
+      padding: 12px;
+      width: 100%;
+      font-size: 13px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      cursor: pointer;
+      transition: background .2s, transform .15s;
+    }
+    .analyse-btn:hover:not(:disabled) { background: var(--green-deep); transform: translateY(-1px); }
+    .analyse-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* ── RESULT STATES ── */
+    .result-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px;
+      color: var(--text-muted);
+      gap: 10px;
+    }
+    .result-empty i { font-size: 40px; color: var(--green-pale); }
+    .result-empty p { font-size: 13px; text-align: center; }
+
+    .result-loading { display: none; flex-direction: column; align-items: center; padding: 40px 16px; gap: 14px; }
+    .result-loading.visible { display: flex; }
+    .spinner {
+      width: 38px; height: 38px;
+      border: 3px solid var(--green-pale);
+      border-top-color: var(--green-vivid);
+      border-radius: 50%;
+      animation: spin .75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .result-main { display: none; }
+    .result-main.visible { display: block; }
+
+    .result-veg-card {
+      background: var(--green-wash);
+      border-radius: var(--r-md);
+      padding: 18px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .result-veg-icon {
+      width: 60px; height: 60px;
+      background: #fff;
+      border-radius: 50%;
+      border: 1px solid var(--green-pale);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 28px;
+      color: var(--green-mid);
+    }
+    .result-veg-name { font-size: 17px; font-weight: 600; color: var(--green-deep); margin-bottom: 3px; }
+    .result-veg-gu   { font-size: 13px; color: var(--text-soft); }
+
+    .conf-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .conf-label { font-size: 12px; color: var(--text-muted); }
+    .conf-pct   { font-size: 15px; font-weight: 600; color: var(--green-mid); }
+    .bar-bg { height: 7px; background: var(--green-wash); border-radius: 50px; overflow: hidden; margin-bottom: 18px; }
+    .bar-fill { height: 100%; background: linear-gradient(90deg, var(--green-vivid), var(--green-light)); border-radius: 50px; transition: width .6s ease; }
+
+    .preds-title {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .06em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .pred-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .pred-row:last-child { border-bottom: none; }
+    .pred-icon { font-size: 14px; color: var(--green-vivid); }
+    .pred-name { flex: 1; font-size: 12px; color: var(--text-main); }
+    .pred-track { flex: 1.5; height: 4px; background: var(--green-wash); border-radius: 50px; overflow: hidden; }
+    .pred-bar   { height: 100%; background: var(--green-light); border-radius: 50px; }
+    .pred-pct   { font-size: 11px; color: var(--text-muted); min-width: 34px; text-align: right; }
+
+    .reset-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: var(--r-md);
+      padding: 9px;
+      width: 100%;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-soft);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      cursor: pointer;
+      margin-top: 14px;
+      transition: background .2s;
+    }
+    .reset-btn:hover { background: var(--green-wash); }
+
+    /* ── SUPPORTED VEGS GRID ── */
+    .vegs-section { margin-top: 4px; }
+    .section-label {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .06em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .veg-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+    .veg-tile {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 14px 8px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow .2s, transform .15s;
+      cursor: default;
+    }
+    .veg-tile:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .veg-tile-icon {
+      width: 40px; height: 40px;
+      background: var(--green-wash);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 9px;
+      font-size: 19px;
+      color: var(--green-mid);
+    }
+    .veg-tile-en { font-size: 11px; font-weight: 500; color: var(--text-main); line-height: 1.35; }
+    .veg-tile-gu { font-size: 10px; color: var(--text-soft); margin-top: 3px; }
+
+    /* ── FLASH MESSAGES ── */
+    .flash { padding: 10px 16px; border-radius: var(--r-sm); margin-bottom: 20px; font-size: 13px; }
+    .flash.error   { background: #fdecea; color: #c0392b; border: 1px solid #f5c6c2; }
+    .flash.success { background: var(--green-wash); color: var(--green-deep); border: 1px solid var(--green-pale); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 680px) {
+      .hero { flex-direction: column; }
+      .hero-stats { flex-direction: row; }
+      .grid { grid-template-columns: 1fr; }
+      .veg-grid { grid-template-columns: repeat(3, 1fr); }
+      nav { padding: 0 16px; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV ── -->
+  <nav>
+    <div class="brand">
+      <div class="brand-icon">
+        <i class="ti ti-leaf" style="font-size:19px;color:#27500A"></i>
+      </div>
+      <div>
+        <div class="brand-name">VeggieSense</div>
+        <div class="brand-tag">AI Classifier</div>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#about">About</a>
+      <a href="#team">Team</a>
+    </div>
+    <div class="nav-cta" onclick="document.querySelector('.dropzone').click()">Try now</div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <div class="hero">
+    <div>
+      <div class="hero-badge">
+        <i class="ti ti-cpu" style="font-size:13px"></i> Custom CNN model
+      </div>
+      <div class="hero-title">Identify Local Vegetables<br></div>
+      <div class="hero-sub">
+        Upload a photo or snap with your camera — our AI recognises
+        5 common Gujarati vegetables instantly.
+      </div>
+      <div class="hero-btns">
+        <button class="btn-solid" onclick="document.querySelector('.dropzone').click()">
+          <i class="ti ti-search" style="font-size:15px"></i> Classify now
+        </button>
+        <button class="btn-ghost" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
+          How it works
+        </button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-card"><div class="stat-num">5</div><div class="stat-lbl">Vegetables</div></div>
+      <div class="stat-card"><div class="stat-num">CNN</div><div class="stat-lbl">Architecture</div></div>
+      <div class="stat-card"><div class="stat-num">Live</div><div class="stat-lbl">Camera</div></div>
+    </div>
+  </div>
+
+  <!-- ── MAIN ── -->
+  <main>
+
+    <!-- Flash messages from Flask -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="grid">
+
+      <!-- Upload card -->
+      <div class="card">
+        <div class="card-head">
+          <i class="ti ti-upload card-head-icon"></i>
+          <div>
+            <div class="card-title">Upload image</div>
+            <div class="card-subtitle">Photo or live camera snap</div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active" id="tab-upload" onclick="switchTab('upload')">
+            <i class="ti ti-folder" style="font-size:14px"></i> Upload file
+          </div>
+          <div class="tab" id="tab-camera" onclick="switchTab('camera')">
+            <i class="ti ti-camera" style="font-size:14px"></i> Camera
+          </div>
+        </div>
+
+        <div class="card-body">
+          <!-- Upload panel -->
+          <div id="panel-upload">
+            <form id="uploadForm" action="/predict" method="POST" enctype="multipart/form-data">
+              <div class="dropzone" id="dropzone"
+                   onclick="document.getElementById('fileInput').click()"
+                   ondragover="event.preventDefault();this.classList.add('drag-over')"
+                   ondragleave="this.classList.remove('drag-over')"
+                   ondrop="handleDrop(event)">
+                <div class="drop-icon">
+                  <i class="ti ti-cloud-upload" style="font-size:22px;color:#639922"></i>
+                </div>
+                <div class="drop-title">Drop image here or click to browse</div>
+                <div class="drop-hint">JPG, PNG, WEBP · max 10 MB</div>
+              </div>
+
+              <input type="file" id="fileInput" name="file" accept="image/*" style="display:none" onchange="handleFile(this.files[0])" />
+
+              <!-- Preview row -->
+              <div class="preview-row" id="previewRow">
+                <div class="preview-thumb" id="previewThumb">
+                  <i class="ti ti-photo" style="font-size:20px;color:#27500A"></i>
+                </div>
+                <div>
+                  <div class="preview-name" id="previewName">—</div>
+                  <div class="preview-meta" id="previewMeta">—</div>
+                </div>
+                <i class="ti ti-x preview-clear" onclick="clearFile()" title="Remove"></i>
+              </div>
+
+              <button class="analyse-btn" id="analyseBtn" type="submit" disabled>
+                <i class="ti ti-search" style="font-size:16px"></i> Analyse vegetable
+              </button>
+            </form>
+          </div>
+
+          <!-- Camera panel -->
+          <div id="panel-camera" class="camera-panel">
+            <video id="videoEl" autoplay playsinline></video>
+            <button class="cam-btn" onclick="capturePhoto()">
+              <i class="ti ti-camera" style="font-size:16px"></i> Capture &amp; analyse
+            </button>
+            <canvas id="canvasEl" style="display:none"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result card -->
+      <div class="card">
+        <div class="card-head">
+          <i class="ti ti-check card-head-icon"></i>
+          <div>
+            <div class="card-title">Result</div>
+            <div class="card-subtitle">Classification &amp; confidence</div>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <!-- Empty state -->
+          <div class="result-empty" id="resultEmpty">
+            <i class="ti ti-plant-2"></i>
+            <p>Upload an image to see the classification result here.</p>
+          </div>
+
+          <!-- Loading -->
+          <div class="result-loading" id="resultLoading">
+            <div class="spinner"></div>
+            <span style="font-size:13px;color:var(--text-muted)">Analysing…</span>
+          </div>
+
+          <!-- Result -->
+          {% if prediction %}
+          <div class="result-main visible" id="resultMain">
+          {% else %}
+          <div class="result-main" id="resultMain">
+          {% endif %}
+
+            {% if prediction %}
+            <div class="result-veg-card">
+              <div class="result-veg-icon">
+                <i class="ti ti-plant-2"></i>
+              </div>
+              <div class="result-veg-name">{{ prediction.name_en }}</div>
+              <div class="result-veg-gu">{{ prediction.name_local }} — {{ prediction.name_script }}</div>
+            </div>
+
+            <div class="conf-row">
+              <span class="conf-label">Confidence score</span>
+              <span class="conf-pct">{{ prediction.confidence }}%</span>
+            </div>
+            <div class="bar-bg">
+              <div class="bar-fill" style="width:{{ prediction.confidence }}%"></div>
+            </div>
+
+            <div class="preds-title">All predictions</div>
+            {% for p in prediction.all_preds %}
+            <div class="pred-row">
+              <i class="ti ti-plant pred-icon"></i>
+              <span class="pred-name">{{ p.name }}</span>
+              <div class="pred-track">
+                <div class="pred-bar" style="width:{{ p.pct }}%"></div>
+              </div>
+              <span class="pred-pct">{{ p.pct }}%</span>
+            </div>
+            {% endfor %}
+
+            <button class="reset-btn" onclick="resetAll()">
+              <i class="ti ti-refresh" style="font-size:14px"></i> Try another image
+            </button>
+            {% endif %}
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Supported vegetables -->
+    <div class="vegs-section" id="how">
+      <div class="section-label">Supported vegetables</div>
+      <div class="veg-grid">
+        <div class="veg-tile">
+          <div class="veg-tile-icon"><i class="ti ti-leaf"></i></div>
+          <div class="veg-tile-en">Ivy Gourd</div>
+          <div class="veg-tile-gu">Tindoda · તિંડોળા</div>
+        </div>
+        <div class="veg-tile">
+          <div class="veg-tile-icon"><i class="ti ti-plant"></i></div>
+          <div class="veg-tile-en">Pointed Gourd</div>
+          <div class="veg-tile-gu">Parvad · પરવળ</div>
+        </div>
+        <div class="veg-tile">
+          <div class="veg-tile-icon" style="color:#BA7517"><i class="ti ti-flame"></i></div>
+          <div class="veg-tile-en">Green Chilli</div>
+          <div class="veg-tile-gu">Lila Marcha · લીલા મરચા</div>
+        </div>
+        <div class="veg-tile">
+          <div class="veg-tile-icon"><i class="ti ti-plant-2"></i></div>
+          <div class="veg-tile-en">Okra</div>
+          <div class="veg-tile-gu">Bhinda · ભીંડા</div>
+        </div>
+        <div class="veg-tile">
+          <div class="veg-tile-icon"><i class="ti ti-circle-dotted"></i></div>
+          <div class="veg-tile-en">Peas</div>
+          <div class="veg-tile-gu">Lila Vatana · લીલા વટાણા</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    let currentStream = null;
+
+    // ── TAB SWITCHING ──
+    function switchTab(tab) {
+      document.getElementById('tab-upload').classList.toggle('active', tab === 'upload');
+      document.getElementById('tab-camera').classList.toggle('active', tab === 'camera');
+      document.getElementById('panel-upload').style.display = tab === 'upload' ? '' : 'none';
+      const camPanel = document.getElementById('panel-camera');
+      camPanel.classList.toggle('visible', tab === 'camera');
+
+      if (tab === 'camera') {
+        startCamera();
+      } else {
+        stopCamera();
+      }
+    }
+
+    // ── CAMERA ──
+    async function startCamera() {
+      try {
+        currentStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        document.getElementById('videoEl').srcObject = currentStream;
+      } catch (e) {
+        alert('Could not access camera: ' + e.message);
+      }
+    }
+
+    function stopCamera() {
+      if (currentStream) {
+        currentStream.getTracks().forEach(t => t.stop());
+        currentStream = null;
+      }
+    }
+
+    function capturePhoto() {
+      const video = document.getElementById('videoEl');
+      const canvas = document.getElementById('canvasEl');
+      canvas.width  = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+      canvas.toBlob(blob => {
+        const file = new File([blob], 'camera_snap.jpg', { type: 'image/jpeg' });
+        handleFile(file);
+        switchTab('upload');
+        // Put captured file into the hidden file input via DataTransfer
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        document.getElementById('fileInput').files = dt.files;
+      }, 'image/jpeg', 0.92);
+    }
+
+    // ── FILE HANDLING ──
+    function handleDrop(e) {
+      e.preventDefault();
+      document.getElementById('dropzone').classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      document.getElementById('fileInput').files = dt.files;
+      handleFile(file);
+    }
+
+    function handleFile(file) {
+      if (!file) return;
+      const sizeMB = (file.size / 1048576).toFixed(1);
+      document.getElementById('previewName').textContent = file.name;
+      document.getElementById('previewMeta').textContent = sizeMB + ' MB · ready to analyse';
+
+      // Show thumbnail
+      const thumb = document.getElementById('previewThumb');
+      const reader = new FileReader();
+      reader.onload = e => {
+        thumb.innerHTML = `<img src="${e.target.result}" alt="preview" />`;
+      };
+      reader.readAsDataURL(file);
+
+      document.getElementById('previewRow').classList.add('visible');
+      document.getElementById('analyseBtn').disabled = false;
+    }
+
+    function clearFile() {
+      document.getElementById('fileInput').value = '';
+      document.getElementById('previewRow').classList.remove('visible');
+      document.getElementById('previewThumb').innerHTML = '<i class="ti ti-photo" style="font-size:20px;color:#27500A"></i>';
+      document.getElementById('analyseBtn').disabled = true;
+    }
+
+    function resetAll() {
+      clearFile();
+      document.getElementById('resultMain').classList.remove('visible');
+      document.getElementById('resultEmpty').style.display = '';
+    }
+
+    // Show loading spinner on form submit
+    document.getElementById('uploadForm').addEventListener('submit', function() {
+      document.getElementById('resultEmpty').style.display = 'none';
+      document.getElementById('resultLoading').classList.add('visible');
+    });
+
+    // If result already rendered by Flask, hide empty state
+    if (document.getElementById('resultMain') &&
+    document.getElementById('resultMain').classList.contains('visible')) {
+  document.getElementById('resultEmpty').style.display = 'none';
+}
+  </script>
+
+</body>
+</html>
