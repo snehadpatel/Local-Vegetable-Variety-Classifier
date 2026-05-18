@@ -181,14 +181,8 @@
             
             let selectedFile = null;
 
-            // Trigger browse
+            // Trigger browse: Clicking anywhere in the prompt area opens file dialog
             dropzonePrompt.addEventListener('click', (e) => {
-                // Prevent trigger if clicking on preview remove
-                if (e.target.tagName !== 'SPAN') return;
-                fileInput.click();
-            });
-
-            dropzonePrompt.querySelector('.btn').addEventListener('click', () => {
                 fileInput.click();
             });
 

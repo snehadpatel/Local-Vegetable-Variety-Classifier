@@ -7,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from PIL import Image
 from torchvision import transforms
-from models import CustomGAPCNN, CustomMultiScaleCNN, CustomResidualCNN
+from models import CustomGAPCNN, CustomMultiScaleCNN, CustomResidualCNN, CustomDeepCNN
 
 # 1. Initialize FastAPI Server
 app = FastAPI(
@@ -27,6 +27,7 @@ CLASSES = ['Green Chilli (Marcha)', 'Ladies finger', 'Pointed gourd', 'ivy guard
 GAP_WEIGHTS_PATH = "gap_model.pth"
 RESIDUAL_WEIGHTS_PATH = "residual_model.pth"
 MULTISCALE_WEIGHTS_PATH = "multiscale_model.pth"
+DEEP_WEIGHTS_PATH = "deep_model.pth"
 
 # 4. Device Setup (Leveraging hardware acceleration if available)
 if torch.backends.mps.is_available():
@@ -53,12 +54,13 @@ def load_model(model_class, weights_path):
         print(f"[FastAPI Init] ERROR loading {model_class.__name__}: {e}")
         return None
 
-print("[FastAPI Init] Initializing Softmax Ensemble (GAP, Multi-Scale, Residual)...")
+print("[FastAPI Init] Initializing Softmax Ensemble (GAP, Multi-Scale, Residual, Deep)...")
 model_gap = load_model(CustomGAPCNN, GAP_WEIGHTS_PATH)
 model_residual = load_model(CustomResidualCNN, RESIDUAL_WEIGHTS_PATH)
 model_multiscale = load_model(CustomMultiScaleCNN, MULTISCALE_WEIGHTS_PATH)
+model_deep = load_model(CustomDeepCNN, DEEP_WEIGHTS_PATH)
 
-ensemble_models = [m for m in [model_gap, model_residual, model_multiscale] if m is not None]
+ensemble_models = [m for m in [model_gap, model_residual, model_multiscale, model_deep] if m is not None]
 
 # 6. Prediction Preprocessing Transforms
 # Standardized resizing and ImageNet mean/std scaling
