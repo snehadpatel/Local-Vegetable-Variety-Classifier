@@ -10,7 +10,7 @@ random.seed(42)
 RAW_DATA_DIR = "/Users/snehapatel/Library/CloudStorage/GoogleDrive-sneha.dipan.dec2005@gmail.com/My Drive/Local Vegetable Variety Classifier/dataset"
 PROCESSED_DATA_DIR = "/Users/snehapatel/Library/CloudStorage/GoogleDrive-sneha.dipan.dec2005@gmail.com/My Drive/Local Vegetable Variety Classifier/dataset_processed"
 IMG_SIZE = (224, 224)
-TARGET_TRAIN_COUNT = 500  # Balanced count per class in the training split
+
 
 def setup_dirs(classes):
     """Creates the target directory structure, deleting any existing preprocessed data."""
@@ -50,49 +50,7 @@ def process_and_save_image(src_path, dest_path):
         print(f"Warning: Failed to process {src_path}. Error: {e}")
         return False
 
-def apply_random_augmentations(img_path):
-    """Loads a standardized image and applies a set of random transformations."""
-    try:
-        with Image.open(img_path) as img:
-            img.load()  # Force load image to memory to prevent lazy closed-file errors
-            # Random Horizontal Flip
-            if random.random() < 0.5:
-                img = img.transpose(Image.FLIP_LEFT_RIGHT)
-                
-            # Random Vertical Flip
-            if random.random() < 0.3:
-                img = img.transpose(Image.FLIP_TOP_BOTTOM)
-                
-            # Random Rotation (-15 to 15 degrees)
-            if random.random() < 0.5:
-                angle = random.uniform(-15, 15)
-                # Rotate and fill boundary pixels with background average or grey
-                img = img.rotate(angle, resample=Image.Resampling.BICUBIC, fillcolor=(127, 127, 127))
-                
-            # Random Brightness (0.8 to 1.2)
-            if random.random() < 0.5:
-                factor = random.uniform(0.8, 1.2)
-                img = ImageEnhance.Brightness(img).enhance(factor)
-                
-            # Random Contrast (0.8 to 1.2)
-            if random.random() < 0.5:
-                factor = random.uniform(0.8, 1.2)
-                img = ImageEnhance.Contrast(img).enhance(factor)
-                
-            # Random Zoom & Crop (scale between 90% and 100% size)
-            if random.random() < 0.5:
-                zoom_factor = random.uniform(0.9, 1.0)
-                w, h = img.size
-                new_w, new_h = int(w * zoom_factor), int(h * zoom_factor)
-                x0 = random.randint(0, w - new_w)
-                y0 = random.randint(0, h - new_h)
-                img = img.crop((x0, y0, x0 + new_w, y0 + new_h))
-                img = img.resize(IMG_SIZE, Image.Resampling.LANCZOS)
-                
-            return img
-    except Exception as e:
-        print(f"Error augmenting {img_path}: {e}")
-        return None
+
 
 def main():
     if not os.path.exists(RAW_DATA_DIR):
@@ -130,8 +88,7 @@ def main():
             "raw_test": len(test_files),
             "processed_train": 0,
             "processed_val": 0,
-            "processed_test": 0,
-            "augmented_train": 0
+            "processed_test": 0
         }
         
         print(f"\n--- Processing class: '{cls}' ---")
@@ -166,47 +123,18 @@ def main():
                 stats[cls]["processed_train"] += 1
                 saved_train_paths.append(dest)
                 
-        # 4. Perform Data Augmentation / Balancing on Train Set
-        processed_train_count = len(saved_train_paths)
-        if processed_train_count == 0:
-            print(f"Error: No valid training images processed for class {cls}!")
-            continue
-            
-        print(f"Oversampling training set from {processed_train_count} to {TARGET_TRAIN_COUNT}...")
-        
-        # We need to generate TARGET_TRAIN_COUNT - processed_train_count images
-        num_to_augment = TARGET_TRAIN_COUNT - processed_train_count
-        
-        if num_to_augment > 0:
-            augmented_created = 0
-            # Keep generating until we hit the goal
-            while augmented_created < num_to_augment:
-                # Randomly pick a base image from the already standardized training set
-                base_img_path = random.choice(saved_train_paths)
-                aug_img = apply_random_augmentations(base_img_path)
-                
-                if aug_img is not None:
-                    base_filename = os.path.basename(base_img_path)
-                    aug_filename = f"aug_{augmented_created}_{base_filename}"
-                    dest = os.path.join(PROCESSED_DATA_DIR, "train", cls, aug_filename)
-                    aug_img.save(dest, 'JPEG', quality=95)
-                    augmented_created += 1
-            stats[cls]["augmented_train"] = augmented_created
-            print(f"Generated {augmented_created} augmented images.")
-        else:
-            print(f"No augmentation needed for {cls} (contains {processed_train_count} images).")
+
             
     # Print beautiful summary report
     print("\n" + "="*80)
     print("                           DATASET BALANCING REPORT")
     print("="*80)
-    print(f"{'Class':<25} | {'Raw Total':<10} | {'Train (Clean + Aug)':<20} | {'Val (Clean)':<12} | {'Test (Clean)':<12}")
+    print(f"{'Class':<25} | {'Raw Total':<10} | {'Train (Clean)':<15} | {'Val (Clean)':<12} | {'Test (Clean)':<12}")
     print("-"*80)
     for cls, data in stats.items():
-        train_str = f"{data['processed_train']} (+{data['augmented_train']}) = {data['processed_train'] + data['augmented_train']}"
-        print(f"{cls:<25} | {data['raw_total']:<10} | {train_str:<20} | {data['processed_val']:<12} | {data['processed_test']:<12}")
+        print(f"{cls:<25} | {data['raw_total']:<10} | {data['processed_train']:<15} | {data['processed_val']:<12} | {data['processed_test']:<12}")
     print("="*80)
-    print("Dataset balancing completed successfully!")
+    print("Dataset splitting completed successfully (relies on real-time PyTorch augmentation)!")
 
 if __name__ == '__main__':
     main()

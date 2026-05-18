@@ -1,0 +1,805 @@
+/* -------------------------------------------------------------
+ * Vegetable Classifier Premium Stylesheet
+ * Custom Dark Glassmorphism Theme (Zero External CSS Frameworks)
+ * ------------------------------------------------------------- */
+
+/* Reset & Foundational Variables */
+:root {
+    --bg-dark: #090b0f;
+    --card-bg: rgba(18, 22, 33, 0.55);
+    --card-border: rgba(255, 255, 255, 0.07);
+    --text-primary: #f3f4f6;
+    --text-secondary: #9ca3af;
+    
+    --primary-neon: #10b981; /* Emerald Green */
+    --secondary-neon: #8b5cf6; /* Purple/Violet */
+    --accent-blue: #3b82f6; /* Blue */
+    --accent-red: #ef4444; /* Coral Red */
+    
+    --transition-smooth: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    --font-stack: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: var(--font-stack);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+}
+
+/* -------------------------------------------------------------
+ * 1. Background Blur Blobs (Floating Animations)
+ * ------------------------------------------------------------- */
+.glass-bg-blobs {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.18;
+    mix-blend-mode: screen;
+    animation: floatBlob 25s infinite alternate ease-in-out;
+}
+
+.blob-purple {
+    background: linear-gradient(135deg, var(--secondary-neon), #c084fc);
+    width: 500px;
+    height: 500px;
+    top: -100px;
+    right: -50px;
+}
+
+.blob-green {
+    background: linear-gradient(135deg, var(--primary-neon), #34d399);
+    width: 450px;
+    height: 450px;
+    bottom: -100px;
+    left: -50px;
+    animation-delay: -5s;
+}
+
+.blob-blue {
+    background: linear-gradient(135deg, var(--accent-blue), #60a5fa);
+    width: 380px;
+    height: 380px;
+    top: 40%;
+    left: 45%;
+    animation-delay: -10s;
+}
+
+@keyframes floatBlob {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(40px, -50px) scale(1.15); }
+    100% { transform: translate(-30px, 30px) scale(0.9); }
+}
+
+/* -------------------------------------------------------------
+ * 2. Layout & Container
+ * ------------------------------------------------------------- */
+.app-container {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+/* Header Styles */
+.app-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    font-size: 1.5rem;
+}
+
+.logo i {
+    font-size: 2.5rem;
+}
+
+.text-glow-green {
+    color: var(--primary-neon);
+    text-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+}
+
+.logo h1 {
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    color: var(--text-primary);
+}
+
+.gradient-text {
+    background: linear-gradient(90deg, var(--primary-neon), var(--accent-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    font-weight: 300;
+    max-width: 600px;
+}
+
+.badge-container {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.badge {
+    padding: 0.4rem 0.85rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.badge-mps {
+    background: rgba(59, 130, 246, 0.12);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #60a5fa;
+}
+
+.badge-accuracy {
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #34d399;
+}
+
+/* -------------------------------------------------------------
+ * 3. Glassmorphic Cards (The Panels)
+ * ------------------------------------------------------------- */
+.glass-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: var(--transition-smooth);
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.panel {
+    display: flex;
+    flex-direction: column;
+    padding: 2.25rem;
+    min-height: 520px;
+}
+
+.panel-header {
+    margin-bottom: 2rem;
+}
+
+.panel-header h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.35rem;
+}
+
+.panel-header p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 300;
+}
+
+.icon-green { color: var(--primary-neon); }
+.icon-purple { color: var(--secondary-neon); }
+
+/* -------------------------------------------------------------
+ * 4. Upload Dropzone Area
+ * ------------------------------------------------------------- */
+.upload-dropzone {
+    flex-grow: 1;
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.015);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: var(--transition-smooth);
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    min-height: 250px;
+}
+
+.upload-dropzone.drag-over {
+    border-color: var(--primary-neon);
+    background: rgba(16, 185, 129, 0.05);
+    transform: scale(1.02);
+}
+
+.dropzone-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.upload-icon-container {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.upload-icon-container i {
+    font-size: 2rem;
+    color: var(--text-secondary);
+    transition: var(--transition-smooth);
+}
+
+.upload-dropzone:hover .upload-icon-container i {
+    color: var(--primary-neon);
+    transform: scale(1.1);
+}
+
+.dropzone-content h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.dropzone-content p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Dropzone Preview State */
+.dropzone-preview {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.dropzone-preview img {
+    max-width: 100%;
+    max-height: 220px;
+    border-radius: 12px;
+    object-fit: contain;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.actions-container {
+    margin-top: 1.75rem;
+}
+
+/* -------------------------------------------------------------
+ * 5. Dynamic Prediction Panels & Animations
+ * ------------------------------------------------------------- */
+
+/* Empty State */
+.empty-state {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    padding: 2rem;
+}
+
+.empty-icon-container {
+    font-size: 3rem;
+    color: rgba(255, 255, 255, 0.05);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 1.5px dashed rgba(255, 255, 255, 0.07);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    animation: rotateSeed 12s infinite linear;
+}
+
+@keyframes rotateSeed {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.empty-state h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.empty-state p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    max-width: 320px;
+    line-height: 1.5;
+}
+
+/* Loading State (Double Bounce Spinner) */
+.loading-state {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    position: relative;
+}
+
+.double-bounce1, .double-bounce2 {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: var(--secondary-neon);
+    opacity: 0.6;
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: bounceSpinner 2.0s infinite ease-in-out;
+}
+
+.double-bounce2 {
+    background-color: var(--primary-neon);
+    animation-delay: -1.0s;
+}
+
+@keyframes bounceSpinner {
+    0%, 100% { transform: scale(0.0); }
+    50% { transform: scale(1.0); }
+}
+
+.loading-state p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+}
+
+/* Active Results Display */
+.results-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Champion Neon Card */
+.champion-card {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(16, 185, 129, 0.08));
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    border-radius: 16px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.08);
+}
+
+.champion-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+    pointer-events: none;
+}
+
+.champ-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--secondary-neon);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.35rem;
+}
+
+.champ-class {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.champ-confidence {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+}
+
+.champ-confidence strong {
+    color: var(--primary-neon);
+    font-size: 1rem;
+}
+
+/* Probability Bars Layout */
+.probabilities-section h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: 0.65rem;
+}
+
+.probabilities-section h3 i {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.probs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+}
+
+.prob-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.prob-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.88rem;
+    font-weight: 400;
+}
+
+.prob-class-name {
+    color: var(--text-secondary);
+    transition: var(--transition-smooth);
+}
+
+.prob-percentage {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.prob-item.highest .prob-class-name {
+    color: var(--primary-neon);
+    font-weight: 600;
+}
+
+.prob-item.highest .prob-percentage {
+    color: var(--primary-neon);
+}
+
+/* Progress bar container structure */
+.progress-bar-container {
+    height: 8px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.02);
+    border-radius: 50px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.15));
+    border-radius: 50px;
+    width: 0%;
+    transition: width 0.85s cubic-bezier(0.1, 0.8, 0.25, 1);
+}
+
+.prob-item.highest .progress-bar-fill {
+    background: linear-gradient(90deg, var(--secondary-neon), var(--primary-neon));
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
+}
+
+.champ-bar {
+    height: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.champ-bar .progress-bar-fill {
+    background: linear-gradient(90deg, var(--secondary-neon), var(--primary-neon));
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
+}
+
+/* -------------------------------------------------------------
+ * 6. UI Components (Buttons & Actions)
+ * ------------------------------------------------------------- */
+.btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-stack);
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    user-select: none;
+}
+
+.btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1.05rem;
+    border-radius: 14px;
+}
+
+.btn-sm {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.75rem;
+    border-radius: 8px;
+}
+
+.btn-block {
+    width: 100%;
+    display: flex;
+}
+
+.btn-primary {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.btn-primary:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #059669, var(--primary-neon));
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+}
+
+.btn-success:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+}
+
+.btn-success:disabled {
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.02);
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+.btn-danger {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #f87171;
+}
+
+.btn-danger:hover {
+    background: rgba(239, 68, 68, 0.25);
+}
+
+/* -------------------------------------------------------------
+ * 7. Footer & Swagger Integration
+ * ------------------------------------------------------------- */
+.app-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    align-items: center;
+}
+
+.api-doc-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: var(--transition-smooth);
+}
+
+.api-doc-link:hover {
+    color: var(--accent-blue);
+    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(59, 130, 246, 0.25);
+    transform: translateY(-1px);
+}
+
+.copyright {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.25);
+    font-weight: 300;
+}
+
+/* Bounce Animation */
+.bounce-animation {
+    animation: bounce 3s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+/* -------------------------------------------------------------
+ * 8. Responsive Design Breakpoints
+ * ------------------------------------------------------------- */
+@media (max-width: 900px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+    }
+    .panel {
+        min-height: auto;
+    }
+    body {
+        padding: 1.5rem 0.75rem;
+    }
+}
+
+/* -------------------------------------------------------------
+ * 9. Showcase Test Samples Component
+ * ------------------------------------------------------------- */
+.samples-section {
+    margin-top: 1.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 1.5rem;
+}
+
+.samples-section h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.samples-section h3 i {
+    color: var(--primary-neon);
+}
+
+.samples-help {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.15rem;
+    font-weight: 300;
+    line-height: 1.4;
+}
+
+.samples-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.65rem;
+}
+
+.sample-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    user-select: none;
+    text-align: center;
+}
+
+.sample-card img {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-bottom: 0.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: var(--transition-smooth);
+}
+
+.sample-card span {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: var(--transition-smooth);
+}
+
+.sample-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--primary-neon);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+}
+
+.sample-card:hover img {
+    border-color: var(--primary-neon);
+}
+
+.sample-card:hover span {
+    color: var(--primary-neon);
+}
+
+.sample-card.active {
+    background: rgba(16, 185, 129, 0.08);
+    border-color: var(--primary-neon);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
+
+.sample-card.active img {
+    border-color: var(--primary-neon);
+}
+
+.sample-card.active span {
+    color: var(--primary-neon);
+    font-weight: 600;
+}
+

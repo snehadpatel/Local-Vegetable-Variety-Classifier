@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vegetable Variety Classifier - Deep Learning Dashboard</title>
+    <!-- Modern Premium Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS Stylesheet -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="glass-bg-blobs">
+        <div class="blob blob-purple"></div>
+        <div class="blob blob-green"></div>
+        <div class="blob blob-blue"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Main Header -->
+        <header class="app-header">
+            <div class="logo">
+                <i class="fa-solid fa-leaf text-glow-green"></i>
+                <h1>Antigravity <span class="gradient-text">Vegetable Classifier</span></h1>
+            </div>
+            <p class="subtitle">Wholly-Trained PyTorch Custom Residual CNN (ResNet-Scratch) Classifier</p>
+            <div class="badge-container">
+                <span class="badge badge-mps"><i class="fa-solid fa-microchip"></i> Apple Silicon MPS GPU Active</span>
+                <span class="badge badge-accuracy"><i class="fa-solid fa-chart-line"></i> Val Accuracy: 95.69%</span>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Layout -->
+        <main class="dashboard-grid">
+            
+            <!-- Left Side: Interactive Upload Panel -->
+            <section class="panel glass-card upload-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-cloud-arrow-up icon-green"></i> Image Upload</h2>
+                    <p>Drag and drop or browse a vegetable image to classify</p>
+                </div>
+                
+                <div class="upload-dropzone" id="dropzone">
+                    <input type="file" id="file-input" accept="image/jpeg, image/png, image/webp" style="display: none;">
+                    
+                    <div class="dropzone-content" id="dropzone-prompt">
+                        <div class="upload-icon-container">
+                            <i class="fa-solid fa-images bounce-animation"></i>
+                        </div>
+                        <h3>Drag & Drop Image Here</h3>
+                        <p>Supports JPG, JPEG, PNG, WEBP</p>
+                        <span class="btn btn-primary">Browse Files</span>
+                    </div>
+
+                    <div class="dropzone-preview" id="dropzone-preview" style="display: none;">
+                        <img id="image-preview" src="#" alt="Vegetable preview">
+                        <button type="button" class="btn btn-danger btn-sm" id="btn-remove-image">
+                            <i class="fa-solid fa-trash-can"></i> Remove Image
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Showcase Test Samples Selection Panel -->
+                <div class="samples-section">
+                    <h3><i class="fa-solid fa-flask"></i> Showcase Test Samples</h3>
+                    <p class="samples-help">Click a thumbnail from the dataset test split to instantly load and run classification:</p>
+                    <div class="samples-grid">
+                        <div class="sample-card" data-sample="/static/samples/green_chilli.jpg" data-name="green_chilli.jpg">
+                            <img src="/static/samples/green_chilli.jpg" alt="Green Chilli">
+                            <span>Chilli</span>
+                        </div>
+                        <div class="sample-card" data-sample="/static/samples/ladies_finger.jpg" data-name="ladies_finger.jpg">
+                            <img src="/static/samples/ladies_finger.jpg" alt="Bhindi">
+                            <span>Bhindi</span>
+                        </div>
+                        <div class="sample-card" data-sample="/static/samples/pointed_gourd.jpg" data-name="pointed_gourd.jpg">
+                            <img src="/static/samples/pointed_gourd.jpg" alt="Pointed Gourd">
+                            <span>Parwal</span>
+                        </div>
+                        <div class="sample-card" data-sample="/static/samples/ivy_guard.jpg" data-name="ivy_guard.jpg">
+                            <img src="/static/samples/ivy_guard.jpg" alt="Ivy Guard">
+                            <span>Tindora</span>
+                        </div>
+                        <div class="sample-card" data-sample="/static/samples/peas.jpg" data-name="peas.jpg">
+                            <img src="/static/samples/peas.jpg" alt="Peas">
+                            <span>Peas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions-container">
+                    <button class="btn btn-success btn-lg btn-block" id="btn-classify" disabled>
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Classify Vegetable
+                    </button>
+                </div>
+            </section>
+
+            <!-- Right Side: Classification Results Panel -->
+            <section class="panel glass-card results-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-square-poll-vertical icon-purple"></i> Inference & Analysis</h2>
+                    <p>Real-time neural network predictions and probabilities</p>
+                </div>
+
+                <!-- Empty State (Before Upload) -->
+                <div class="empty-state" id="results-empty">
+                    <div class="empty-icon-container">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <h3>Awaiting Prediction</h3>
+                    <p>Upload a vegetable image and click Classify to run inference on our champion Custom Residual CNN model.</p>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div class="loading-state" id="results-loading" style="display: none;">
+                    <div class="spinner">
+                        <div class="double-bounce1"></div>
+                        <div class="double-bounce2"></div>
+                    </div>
+                    <p>Passing image through residual skip blocks...</p>
+                </div>
+
+                <!-- Active Inference Results -->
+                <div class="results-content" id="results-active" style="display: none;">
+                    <!-- Highlighted Champion Card -->
+                    <div class="champion-card">
+                        <div class="champ-label">CHAMPION PREDICTION</div>
+                        <div class="champ-class" id="result-prediction">-</div>
+                        <div class="champ-confidence">
+                            <span>Confidence Score:</span>
+                            <strong id="result-confidence">0.0%</strong>
+                        </div>
+                        <div class="progress-bar-container champ-bar">
+                            <div class="progress-bar-fill" id="result-confidence-bar" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Complete Probabilities Breakdown -->
+                    <div class="probabilities-section">
+                        <h3><i class="fa-solid fa-sliders"></i> Class Probability Distribution</h3>
+                        <div class="probs-list" id="probabilities-list">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-links">
+                <a href="/docs" target="_blank" class="api-doc-link">
+                    <i class="fa-solid fa-code"></i> FastAPI Interactive Swagger Documentation (/docs)
+                </a>
+            </div>
+            <p class="copyright">&copy; 2026 Local Vegetable Variety Classifier. Designed with Premium Glassmorphic Vanilla Stack.</p>
+        </footer>
+    </div>
+
+    <!-- Interface Script Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropzone = document.getElementById('dropzone');
+            const fileInput = document.getElementById('file-input');
+            const dropzonePrompt = document.getElementById('dropzone-prompt');
+            const dropzonePreview = document.getElementById('dropzone-preview');
+            const imagePreview = document.getElementById('image-preview');
+            const btnRemoveImage = document.getElementById('btn-remove-image');
+            const btnClassify = document.getElementById('btn-classify');
+            
+            const resultsEmpty = document.getElementById('results-empty');
+            const resultsLoading = document.getElementById('results-loading');
+            const resultsActive = document.getElementById('results-active');
+            
+            const resultPrediction = document.getElementById('result-prediction');
+            const resultConfidence = document.getElementById('result-confidence');
+            const resultConfidenceBar = document.getElementById('result-confidence-bar');
+            const probabilitiesList = document.getElementById('probabilities-list');
+            
+            let selectedFile = null;
+
+            // Trigger browse
+            dropzonePrompt.addEventListener('click', (e) => {
+                // Prevent trigger if clicking on preview remove
+                if (e.target.tagName !== 'SPAN') return;
+                fileInput.click();
+            });
+
+            dropzonePrompt.querySelector('.btn').addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', () => {
+                document.querySelectorAll('.sample-card').forEach(c => c.classList.remove('active'));
+                handleFileSelect();
+            });
+
+            // Drag and drop event handlers
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropzone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropzone.classList.add('drag-over');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropzone.classList.remove('drag-over');
+                }, false);
+            });
+
+            dropzone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    document.querySelectorAll('.sample-card').forEach(c => c.classList.remove('active'));
+                    handleFileSelect();
+                }
+            });
+
+            // Showcase Test Samples Interactive Loader
+            document.querySelectorAll('.sample-card').forEach(card => {
+                card.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const sampleUrl = card.getAttribute('data-sample');
+                    const sampleName = card.getAttribute('data-name');
+                    
+                    // Mark as active
+                    document.querySelectorAll('.sample-card').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    
+                    // Show a loading text or transition state in the results empty panel
+                    resultsEmpty.innerHTML = `
+                        <div class="spinner" style="margin-bottom: 1rem;">
+                            <div class="double-bounce1"></div>
+                            <div class="double-bounce2"></div>
+                        </div>
+                        <h3>Loading Sample Image...</h3>
+                        <p>Fetching raw file from server and preparing tensors...</p>
+                    `;
+                    
+                    try {
+                        const response = await fetch(sampleUrl);
+                        const blob = await response.blob();
+                        const file = new File([blob], sampleName, { type: 'image/jpeg' });
+                        
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(file);
+                        fileInput.files = dataTransfer.files;
+                        
+                        // Restore default HTML for results empty state in case we cancel
+                        resultsEmpty.innerHTML = `
+                            <div class="empty-icon-container">
+                                <i class="fa-solid fa-seedling"></i>
+                            </div>
+                            <h3>Awaiting Prediction</h3>
+                            <p>Upload a vegetable image and click Classify to run inference on our champion Custom Residual CNN model.</p>
+                        `;
+                        
+                        handleFileSelect();
+                        
+                        // Small timeout to allow dropzone preview fade-in before starting classification
+                        setTimeout(() => {
+                            btnClassify.click();
+                        }, 250);
+                        
+                    } catch (err) {
+                        console.error('Failed to load sample image:', err);
+                        alert('Failed to load the showcase image from static resources.');
+                    }
+                });
+            });
+
+            function handleFileSelect() {
+                const file = fileInput.files[0];
+                if (!file) return;
+
+                // Simple file validation
+                if (!file.type.match('image.*')) {
+                    alert('Please select a valid image file (JPEG, PNG, WEBP).');
+                    return;
+                }
+
+                selectedFile = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    dropzonePrompt.style.display = 'none';
+                    dropzonePreview.style.display = 'flex';
+                    btnClassify.removeAttribute('disabled');
+                    
+                    // Reset results area to empty state when new image is loaded
+                    resultsEmpty.style.display = 'flex';
+                    resultsLoading.style.display = 'none';
+                    resultsActive.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+
+            btnRemoveImage.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fileInput.value = '';
+                selectedFile = null;
+                imagePreview.src = '#';
+                dropzonePreview.style.display = 'none';
+                dropzonePrompt.style.display = 'flex';
+                btnClassify.setAttribute('disabled', 'true');
+                
+                resultsEmpty.style.display = 'flex';
+                resultsLoading.style.display = 'none';
+                resultsActive.style.display = 'none';
+                
+                document.querySelectorAll('.sample-card').forEach(c => c.classList.remove('active'));
+            });
+
+            btnClassify.addEventListener('click', async () => {
+                if (!selectedFile) return;
+
+                // Update UI state to loading
+                resultsEmpty.style.display = 'none';
+                resultsActive.style.display = 'none';
+                resultsLoading.style.display = 'flex';
+
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+
+                try {
+                    const response = await fetch('/predict', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Prediction API returned an error status.');
+                    }
+
+                    const data = await response.json();
+                    
+                    // Render Results after a small timeout to let the animation breathe
+                    setTimeout(() => {
+                        resultsLoading.style.display = 'none';
+                        resultsActive.style.display = 'block';
+
+                        // Set Champion Details
+                        resultPrediction.innerText = data.prediction;
+                        const confidencePct = (data.confidence * 100).toFixed(1) + '%';
+                        resultConfidence.innerText = confidencePct;
+                        resultConfidenceBar.style.width = confidencePct;
+
+                        // Populating full list
+                        probabilitiesList.innerHTML = '';
+                        
+                        // Sort by probability descending
+                        const sortedProbs = Object.entries(data.probabilities).sort((a, b) => b[1] - a[1]);
+                        
+                        sortedProbs.forEach(([clsName, probVal]) => {
+                            const pct = (probVal * 100).toFixed(1) + '%';
+                            
+                            const probItem = document.createElement('div');
+                            probItem.className = 'prob-item';
+                            if (clsName === data.prediction) {
+                                probItem.className += ' highest';
+                            }
+                            
+                            probItem.innerHTML = `
+                                <div class="prob-info">
+                                    <span class="prob-class-name">${clsName}</span>
+                                    <span class="prob-percentage">${pct}</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" style="width: ${pct}"></div>
+                                </div>
+                            `;
+                            probabilitiesList.appendChild(probItem);
+                        });
+
+                    }, 600);
+
+                } catch (error) {
+                    console.error('Error during classification:', error);
+                    resultsLoading.style.display = 'none';
+                    resultsEmpty.style.display = 'flex';
+                    alert('Prediction failed. Please make sure the FastAPI server is running and try again.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
