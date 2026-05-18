@@ -1,6 +1,10 @@
 import os
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+
 import io
 import torch
+import numpy as np
+from rembg import remove
 from fastapi import FastAPI, File, UploadFile, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -65,7 +69,8 @@ ensemble_models = [m for m in [model_gap, model_residual, model_multiscale, mode
 # 6. Prediction Preprocessing Transforms
 # Standardized resizing and ImageNet mean/std scaling
 predict_transforms = transforms.Compose([
-    transforms.Resize((224, 224)),
+    transforms.Resize(256),          # Resize shortest edge to 256, maintaining aspect ratio
+    transforms.CenterCrop(224),      # Crop the center 224x224 to prevent shape squishing
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
@@ -86,7 +91,7 @@ async def serve_home(request: Request):
 # POST Route: Predict Class Probabilities for Uploaded Image
 # =====================================================================
 @app.post("/predict")
-async def predict_vegetable(file: UploadFile = File(...)):
+async def predict_vegetable(request: Request, file: UploadFile = File(...)):
     """
     Accepts an uploaded image file, processes it, runs inference through
     our Custom Residual CNN model, and returns classification probabilities.
@@ -106,50 +111,101 @@ async def predict_vegetable(file: UploadFile = File(...)):
         )
 
     try:
-        # 3. Read File Bytes and Open Image
+        # 3. Read image bytes and remove background instantly
         contents = await file.read()
-        image = Image.open(io.BytesIO(contents)).convert("RGB")
+        
+        # Strip background to pure black to match the dataset_nobg training
+        nobg_bytes = remove(contents)
+        
+        # Convert to RGB image, pasting transparent background onto black
+        img_rgba = Image.open(io.BytesIO(nobg_bytes)).convert("RGBA")
+        black_bg = Image.new("RGBA", img_rgba.size, (0, 0, 0, 255))
+        black_bg.paste(img_rgba, (0, 0), img_rgba)
+        image = black_bg.convert("RGB")
         
         # 4. Apply Transforms and Construct Batch Dimension
         tensor = predict_transforms(image).unsqueeze(0).to(device)
         
-        # 5. Run Softmax Ensemble Inference
+        # 5. Run Weighted Softmax Ensemble Inference
         with torch.no_grad():
-            ensemble_probs = []
-            for model in ensemble_models:
-                outputs = model(tensor)
-                probs = torch.softmax(outputs, dim=1).squeeze().cpu().numpy()
-                ensemble_probs.append(probs)
-                
-            # Average the probabilities across all active models in the ensemble
-            probabilities = sum(ensemble_probs) / len(ensemble_probs)
+            # Accuracies from our latest test run:
+            # DeepCNN: 86%, GAPCNN: 82%, ResidualCNN: 78%, MultiScaleCNN: 71%
+            # We assign mathematically proportional voting power to the better models.
+            all_models = [model_gap, model_residual, model_multiscale, model_deep]
+            target_weights = [0.26, 0.24, 0.22, 0.28] 
             
+            active_models_with_weights = [(m, w) for m, w in zip(all_models, target_weights) if m is not None]
+            total_weight = sum(w for _, w in active_models_with_weights)
+            
+            weighted_probs = np.zeros(len(CLASSES))
+            for model, weight in active_models_with_weights:
+                outputs = model(tensor)
+                
+                # Apply Temperature Scaling (T=0.8) to sharpen the network's confidence
+                outputs = outputs / 0.8 
+                
+                probs = torch.softmax(outputs, dim=1).squeeze().cpu().numpy()
+                
+                # Apply the model's specific voting weight
+                weighted_probs += probs * (weight / total_weight)
+                
+            # Bayesian Class-Prior Calibration:
+            # We recently added 125 Ivy Gourd images to the dataset. To prevent the Ensemble 
+            # from developing a bias toward Ivy Gourd, we apply a mathematical 15% penalty 
+            # to its final probability, preventing it from dominating Pointed Gourd or Peas.
+            ivy_idx = CLASSES.index('ivy guard')
+            weighted_probs[ivy_idx] *= 0.85 
+            
+            # Re-normalize the probabilities so they equal 100%
+            probabilities = weighted_probs / weighted_probs.sum()
+            
+        # Mapping dataset classes to UI details
+        veg_details = {
+            'Green Chilli (Marcha)': {'name_en': 'Green Chilli', 'name_local': 'Lila Marcha', 'name_script': 'લીલા મરચા'},
+            'Ladies finger': {'name_en': 'Okra', 'name_local': 'Bhinda', 'name_script': 'ભીંડા'},
+            'Pointed gourd': {'name_en': 'Pointed Gourd', 'name_local': 'Parvad', 'name_script': 'પરવળ'},
+            'ivy guard': {'name_en': 'Ivy Gourd', 'name_local': 'Tindoda', 'name_script': 'તિંડોળા'},
+            'peas': {'name_en': 'Peas', 'name_local': 'Lila Vatana', 'name_script': 'લીલા વટાણા'}
+        }
+        
         # 6. Organize Response Data
         prediction_index = probabilities.argmax()
-        prediction = CLASSES[prediction_index]
+        raw_pred_name = CLASSES[prediction_index]
         confidence = float(probabilities[prediction_index])
         
-        # Compile dictionary of individual class percentages
-        probs_dict = {CLASSES[i]: float(probabilities[i]) for i in range(len(CLASSES))}
+        pred_obj = veg_details[raw_pred_name].copy()
+        pred_obj["confidence"] = round(confidence * 100, 2)
         
-        return {
-            "prediction": prediction,
-            "confidence": confidence,
-            "probabilities": probs_dict
-        }
+        # Compile dictionary of individual class percentages for UI
+        all_preds = []
+        for i in range(len(CLASSES)):
+            pct = round(float(probabilities[i]) * 100, 2)
+            if pct > 0.01:
+                ui_name = veg_details[CLASSES[i]]['name_en']
+                all_preds.append({"name": ui_name, "pct": pct})
+        
+        # Sort predictions by percentage descending
+        all_preds.sort(key=lambda x: x['pct'], reverse=True)
+        pred_obj["all_preds"] = all_preds
+        
+        return templates.TemplateResponse(request=request, name="index.html", context={"prediction": pred_obj})
 
     except Exception as e:
         print(f"[FastAPI Predict] Error during processing: {e}")
-        raise HTTPException(
-            status_code=500,
-            detail=f"An error occurred while running model classification: {str(e)}"
+        return templates.TemplateResponse(
+            request=request, 
+            name="index.html", 
+            context={"error": f"An error occurred: {str(e)}"}
         )
 
-
 # =====================================================================
-# Server Startup Check
+# Server Startup (Deployment Ready)
 # =====================================================================
 if __name__ == "__main__":
     import uvicorn
-    # Start ASGI Web Server locally on port 8000
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    import os
+    
+    # Use environment port for deployments (e.g. Heroku, Render)
+    port = int(os.environ.get("PORT", 8000))
+    # Run in production mode (reload=False, bound to 0.0.0.0)
+    uvicorn.run("app:app", host="0.0.0.0", port=port, reload=False, workers=1)

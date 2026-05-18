@@ -34,8 +34,8 @@ def main():
     standard_transform = transforms.Compose([
         transforms.RandomHorizontalFlip(),
         transforms.RandomRotation(25),
-        transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4, hue=0.1),
-        transforms.RandomGrayscale(p=0.2),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.05),
+        transforms.RandomGrayscale(p=0.05),
         transforms.RandomAffine(degrees=0, translate=(0.1, 0.1), scale=(0.9, 1.1)),
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
@@ -44,7 +44,7 @@ def main():
     ivy_transform = transforms.Compose([
         transforms.RandomHorizontalFlip(),
         transforms.RandomRotation(30),
-        transforms.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.2),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.1),
         transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),
         transforms.GaussianBlur(kernel_size=(5, 9), sigma=(0.1, 2.0)),
         transforms.ToTensor(),
