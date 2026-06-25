@@ -13,3 +13,20 @@ venv/
 # Local cleaner tool state and isolated files
 dataset_cleaner_state.json
 dataset/peas_removed/
+
+# Large dataset directories
+dataset/
+dataset_processed/
+dataset_nobg/
+*.png
+*.jpg
+*.jpeg
+!static/samples/*.jpg
+!deep_curves.png
+!depthwise_curves.png
+!gap_curves.png
+!light_curves.png
+!multiscale_curves.png
+!residual_curves.png
+!resnet18_curves.png
+

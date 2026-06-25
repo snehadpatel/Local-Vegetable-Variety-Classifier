@@ -120,6 +120,32 @@ The server will bind to `http://localhost:8000/`. You can upload local images, s
 
 ---
 
+## ☁️ Cloud Deployment
+
+VeggieSense is fully containerized and ready for cloud deployment.
+
+### Option A: Hugging Face Spaces (Recommended - Free 16GB RAM)
+Hugging Face Spaces provides high-performance CPU instances ideal for running PyTorch models without memory crashes.
+1. Create a new Space at [huggingface.co/new-space](https://huggingface.co/new-space).
+2. Choose **Docker** as the SDK, then select the **Blank** template.
+3. Clone your newly created Space repository locally.
+4. Copy all VeggieSense files (including `app.py`, `models.py`, `utils.py`, `templates/`, `static/`, `requirements.txt`, `Dockerfile`, and all `.pth` weights) into the Space folder.
+5. Push the changes to Hugging Face:
+   ```bash
+   git add .
+   git commit -m "Deploy VeggieSense Ensemble App"
+   git push
+   ```
+6. Hugging Face will automatically build and run the Docker container.
+
+### Option B: Render Web Service
+1. Link your GitHub repository containing the VeggieSense files to [Render](https://render.com/).
+2. Create a new **Web Service** on Render and select this repository.
+3. Render will auto-detect the `Dockerfile` and configure the build process automatically.
+4. Note: On Render's Free tier, the 512MB RAM limit may occasionally result in Out-Of-Memory (OOM) failures under heavy `rembg` processing. A paid Starter tier or Option A is recommended.
+
+---
+
 ## 🧠 Ensemble Voting Mechanics
 
 During prediction, the model feeds the input through all loaded networks. The resulting output logits are divided by a temperature factor of $T = 0.8$ to sharpen confidence, converted to probabilities via Softmax, and combined using a weighted sum:

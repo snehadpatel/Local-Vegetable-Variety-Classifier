@@ -1,0 +1,10 @@
+torch
+torchvision
+fastapi
+uvicorn
+rembg
+pillow
+numpy
+jinja2
+python-multipart
+matplotlib
