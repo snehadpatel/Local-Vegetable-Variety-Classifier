@@ -1,0 +1,18 @@
+True Class                | Image Filename       | Predicted Class           | Confidence
+-----------------------------------------------------------------------------------------
+Green Chilli (Marcha)     | IMG_20241101_122930.jpg | Green Chilli (Marcha)     | 93.68%
+   Probabilities: Green Chilli (Marcha): 93.7%, Ladies finger: 0.7%, Pointed gourd: 4.5%, ivy guard: 1.0%, peas: 0.1%
+
+Ladies finger             | IMG_20241030_224932.jpg | Ladies finger             | 90.13%
+   Probabilities: Green Chilli (Marcha): 0.4%, Ladies finger: 90.1%, Pointed gourd: 1.9%, ivy guard: 7.5%, peas: 0.1%
+
+Pointed gourd             | IMG_20241028_184942.jpg | Pointed gourd             | 74.43%
+   Probabilities: Green Chilli (Marcha): 3.0%, Ladies finger: 15.0%, Pointed gourd: 74.4%, ivy guard: 7.4%, peas: 0.2%
+
+ivy guard                 | IMG_20260518_073202159.jpg | ivy guard                 | 99.24%
+   Probabilities: Green Chilli (Marcha): 0.1%, Ladies finger: 0.1%, Pointed gourd: 0.1%, ivy guard: 99.2%, peas: 0.5%
+
+peas                      | IMG_20260518_121942998.jpg | peas                      | 58.90%
+   Probabilities: Green Chilli (Marcha): 8.5%, Ladies finger: 0.2%, Pointed gourd: 15.9%, ivy guard: 16.5%, peas: 58.9%
+
+================================================================================

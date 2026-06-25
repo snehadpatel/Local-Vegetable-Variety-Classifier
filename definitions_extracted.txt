@@ -1,0 +1,148 @@
+--- Page 1 ---
+Page 1 of 6 
+ 
+Artificial Intelligence Laboratory End Sem Exam, Dt. 17 and 18 -May-2026, Program 
+Definitions 
+Focal Points :  
+1. Hosting of Model is must for all the definitions in Flask, Django, Fast-API, Spring, 
+NodeJS, etc. only with proper user-friendly interface. 
+2. Go for maximum number of model preparation for better accuracy.  
+3. A core problem definition model must not be pretrained except if mentioned in 
+question below. Otherwise, it must be your wholly trained own model.  
+4. For viva one must show a step-by-step breakdown of your design and 
+implemented architecture, framework and algorithm. Failure to explain the nodal 
+milestones means one has not understood the problem and simply used AI 
+generated solution.  
+5. During the viva, one must be able to explain the underlying concept used. 
+Eg. if you have resolved issue using R-CNN and VGG-NET then a group must have 
+indepth understanding of R-CNN and VGGNET, its working and architecture with 
+justification as to why any synonymous technology is not used. 
+6. Marking is RELATIVE. 
+7. Viva and Presentation will start at 2:00pm 18-May-2026 in 207, 203b and 203a  
+lab. All the groups for viva will come one by one as per the sequence. 
+ 
+  
+--- Page 2 ---
+Page 2 of 6 
+ 
+PROBLEM DEFINITIONS 
+1. Develop a English to Hindi transliterator. 
+[Please mention source of dataset used to develop your model] 
+INPUT: 
+ 
+ 
+OUTPUT: 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+Narendra Modi Bharat ke pradhanmantri hain. Dilli mein India 
+Gate sthit hai. Reliance Industries ek badi company hai. Aaj 10 
+May ko mausam accha hai. Yeh ghatna 2023 mein hui thi. . 
+Unhone ₹500 daan kiye. Bharat ne 2020 mein lockdown lagaya 
+tha. Swatantrata Diwas 15 August ko manaya jata hai. Mere 
+paas Samsung Galaxy phone hai. 
+नरेंद्र मोदी भारत  के प्रधानमंत्री हैं।  ददल्ली  में इंडिया गेट स्थित है। 
+ररलायंस इंिथरीज  एक बडी कंपनी है। आज 10 मई  को मौसम अच्छा 
+है। यह घटना 2023  में हुई िी। उन्होंने ₹500 दान ककए। भारत  ने 
+2020 में लॉकिाउन लगाया िा। थवतंत्रता ददवस 15 अगथत  को मनाया 
+जाता है। मेरे पास सैमसंग  गैलेक्सी  फोन है। 
+--- Page 3 ---
+Page 3 of 6 
+ 
+2. Design an AI based Career counsellor which is highly intelligent and adaptive to 
+the the answers given by student who wants career guidance to choose Engineering 
+(Civil, Mechanical, Electrical, Computer Science), Science (Biology, Chemistry, 
+Physics), BBA or MBA (Management). 
+Eg. Imagine a student how have cleared 12th standard with General or Science stream 
+approaches university for admission. The University possess an intelligent chat bot 
+which ask questions to students and decides students interest and suggest the stream. 
+The bot should not ask direct questions but indirect questions pertaining to the field, it 
+then analyze the answer and suggest the field. The question must not be direct but 
+indirect extracting valuable information from student and know the interest. 
+Design and implement an Intelligent Career Counsellor Chatbot for university 
+admissions. Unlike traditional rule-based bots, this system must act as a human 
+interviewer, using indirect questioning to uncover a student's latent interests and 
+technical aptitude. The system should analyze open-ended responses to suggest a path 
+in Engineering (Civil, Mech, Elec, CSE), Pure Sciences (Bio, Chem, Phys), or 
+Management (BBA/MBA). 
+• Adaptive Contextual Questioning: The chatbot must not ask direct questions. Instead, 
+it should use indirect inquiries. Based on the student's answer, the next question must 
+pivot to dive deeper into that specific context. 
+[Note : Here you are allowed to use any pre-trained model. You may use any available 
+dataset] 
+ 
+ 
+3. Gujarati Handwritten Mathematical equation digitization and solution. 
+Design and implement a basic handwritten mathematical equation written in 
+Gujarati language to digitize and calculating the answer. Please find the image 
+below for your reference. Prepare, collect, or scrap a dataset of handwritten 
+Gujarati numerals (૦-૯) and operators (+, -, x, ÷). 
+Input:  (An image or snip taken through device camera. 
+Output : ૬ x ૪ - 3 + ૨ = ૨૩   
+
+--- Page 4 ---
+Page 4 of 6 
+ 
+4. Local vegetable variety classifier 
+Develop an end-to-end AI application that can accurately classify 5 common 
+vegetables.  
+1. Ivy Gourd (Tindoda) 
+2. Pointed Gourd (Parvad) 
+3. Green Chilli (Lila Marcha) 
+4. Okra / Ladies Finger (Bhinda) 
+5. Peas (lila Vatana) 
+The model must be robust enough to differentiate between vegetables with similar 
+morphological features. The system must be tested with real object and photographic 
+images. 
+Eg. 
+Input : 
+Upload an Image or Snap through your device camera  
+ 
+ Output : Pointed Gourd (Parvad) 
+Input : 
+Upload an Image or Snap through your device camera  
+  
+Output : Okra / Ladies Finger (Bhinda) 
+ 
+Input : 
+Upload an Image or Snap through your device camera  
+ 
+
+--- Page 5 ---
+Page 5 of 6 
+ 
+  
+Output : Peas (Vatana) 
+ 
+Input : 
+Upload an Image or Snap through your device camera  
+ 
+  
+Output : Green Chilli (Marcha) 
+Input : 
+Upload an Image or Snap through your device camera  
+ 
+  
+Output : Ivy Gourd (Tindoda) 
+ 
+5. A software company wants to build automated resume ranking framework based 
+on their job description to make the recruitment process easier, faster and more 
+
+--- Page 6 ---
+Page 6 of 6 
+ 
+efficient. The company receives resume through email or through web forms, which 
+allows upload of resume in pdf or word format. The resume is format free. The candidate 
+is free to use their own format for the resume building. The intelligent system looks at 
+resume one by one and ranks it according to the job description. 
+[Note : Here you are allowed to use any pre-trained model. You may use any available 
+dataset] 
+ 
+ 
