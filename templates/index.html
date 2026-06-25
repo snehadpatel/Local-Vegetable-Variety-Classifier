@@ -436,6 +436,89 @@
       nav { padding: 0 16px; }
       .nav-links { display: none; }
     }
+
+    /* ── ABOUT SECTION ── */
+    .about-card-body {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      align-items: center;
+    }
+    
+    /* ── TEAM SECTION ── */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+    .team-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 20px 12px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .team-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--green-vivid);
+    }
+    .team-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 600;
+      font-size: 20px;
+      margin-bottom: 12px;
+      border: 2px solid var(--border);
+      box-shadow: 0 4px 10px rgba(11, 46, 38, 0.08);
+      transition: transform 0.3s ease;
+    }
+    .team-card:hover .team-avatar {
+      transform: scale(1.1) rotate(5deg);
+    }
+    .team-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--green-deep);
+      margin-bottom: 2px;
+    }
+    .team-role {
+      font-size: 11px;
+      color: var(--text-soft);
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .team-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    @media (max-width: 768px) {
+      .about-card-body {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .team-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .team-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -674,6 +757,109 @@
           <div class="veg-tile-icon"><i class="ti ti-circle-dotted"></i></div>
           <div class="veg-tile-en">Peas</div>
           <div class="veg-tile-gu">Lila Vatana · લીલા વટાણા</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="about-section" id="about" style="margin-top: 48px; border-top: 1px solid var(--border); padding-top: 36px;">
+      <div class="section-label">About the Project</div>
+      <div class="card" style="margin-bottom: 28px;">
+        <div class="card-head">
+          <i class="ti ti-info-circle card-head-icon"></i>
+          <div>
+            <div class="card-title">VeggieSense Intelligence</div>
+            <div class="card-subtitle">Ensemble Deep Learning on Apple Silicon</div>
+          </div>
+        </div>
+        <div class="card-body about-card-body">
+          <div style="line-height: 1.65; font-size: 14px; color: var(--text-soft);">
+            <p style="margin-bottom: 14px;">
+              <strong>VeggieSense</strong> is an advanced, hardware-accelerated classification engine designed to identify local Gujarati vegetable varieties with expert-level precision. At its core, the system processes input images by automatically stripping out complex backgrounds using a fast <code>rembg</code> model, leaving a clean, standardized black backdrop.
+            </p>
+            <p>
+              This processed image is then evaluated by an <strong>Ensemble of 4 Custom Convolutional Neural Networks</strong>. By combining predictions from a Global Average Pooling (GAP) CNN, a Multi-Scale CNN, a Residual CNN, and a Deep CNN, the model provides robust class probabilities. The final output is calibrated using temperature scaling and a Bayesian prior correction to deliver balanced, highly accurate predictions.
+            </p>
+          </div>
+          <div style="background: var(--green-wash); border-radius: var(--r-md); padding: 16px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i class="ti ti-cpu" style="font-size: 20px; color: var(--green-mid);"></i>
+              <div>
+                <div style="font-weight: 600; font-size: 13px; color: var(--green-deep);">Apple Silicon GPU</div>
+                <div style="font-size: 11px; color: var(--text-muted);">MPS Hardware Acceleration</div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i class="ti ti-layers-difference" style="font-size: 20px; color: var(--green-mid);"></i>
+              <div>
+                <div style="font-weight: 600; font-size: 13px; color: var(--green-deep);">Ensemble Voting</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Weighted GAP, Residual, Multi-Scale, Deep</div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i class="ti ti-adjustments-horizontal" style="font-size: 20px; color: var(--green-mid);"></i>
+              <div>
+                <div style="font-weight: 600; font-size: 13px; color: var(--green-deep);">Bayesian Calibration</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Class-prior adjustment for balance</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Team Section -->
+    <div class="team-section" id="team" style="margin-top: 48px; border-top: 1px solid var(--border); padding-top: 36px; margin-bottom: 24px;">
+      <div class="section-label">Our Team</div>
+      <div class="team-grid">
+        <!-- Sneha Patel -->
+        <div class="team-card">
+          <div class="team-avatar" style="background: linear-gradient(135deg, var(--green-mid), var(--green-light));">
+            SP
+          </div>
+          <div class="team-name">Sneha Patel</div>
+          <div class="team-role">Lead AI Architect</div>
+          <div class="team-desc">Deep learning systems and hardware acceleration.</div>
+        </div>
+
+        <!-- Hardi Patel -->
+        <div class="team-card">
+          <div class="team-avatar" style="background: linear-gradient(135deg, #1f7fa3, #6fd6d1);">
+            HP
+          </div>
+          <div class="team-name">Hardi Patel</div>
+          <div class="team-role">Computer Vision Engineer</div>
+          <div class="team-desc">Custom CNN training and feature mapping.</div>
+        </div>
+
+        <!-- Tithi Patel -->
+        <div class="team-card">
+          <div class="team-avatar" style="background: linear-gradient(135deg, #a31f7f, #d66fb2);">
+            TP
+          </div>
+          <div class="team-name">Tithi Patel</div>
+          <div class="team-role">Data Specialist</div>
+          <div class="team-desc">Background removal and dataset balancing.</div>
+        </div>
+
+        <!-- Ayush Singh -->
+        <div class="team-card">
+          <div class="team-avatar" style="background: linear-gradient(135deg, #a36f1f, #d6be6f);">
+            AS
+          </div>
+          <div class="team-name">Ayush Singh</div>
+          <div class="team-role">Backend &amp; API Architect</div>
+          <div class="team-desc">FastAPI server design and model inference pipeline.</div>
+        </div>
+
+        <!-- Amaan Malik -->
+        <div class="team-card">
+          <div class="team-avatar" style="background: linear-gradient(135deg, #321fa3, #726fd6);">
+            AM
+          </div>
+          <div class="team-name">Amaan Malik</div>
+          <div class="team-role">UX/UI Designer</div>
+          <div class="team-desc">Interactive glassmorphism dashboard design.</div>
         </div>
       </div>
     </div>
