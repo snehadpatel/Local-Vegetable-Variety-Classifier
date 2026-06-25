@@ -135,8 +135,8 @@ Where model weights are mathematically proportional to individual test accuracie
 ---
 
 ## 👥 Engineering Team
-- **Sneha Patel** — Lead AI Architect (Deep learning systems & GPU optimization)
-- **Hardi Patel** — Computer Vision Engineer (Custom CNN training & feature mapping)
-- **Tithi Patel** — Data Specialist (Background removal & dataset balancing)
-- **Ayush Singh** — Backend & API Architect (FastAPI server design & inference pipeline)
-- **Amaan Malik** — UX/UI Designer (Interactive glassmorphism dashboard design)
+- **Sneha Patel** — Project Lead & Core AI/CV Engineer (Designed & trained all custom CNN architectures; engineered the hardware acceleration pipeline)
+- **Hardi Patel** — AI Research Collaborator (Contributed to neural architecture research and model validation design)
+- **Tithi Patel** — UI/UX Design Collaborator (Assisted with the interactive layouts and aesthetic design of the dashboard)
+- **Ayush Singh** — Backend API Collaborator (Supported the FastAPI backend integration and server deployment logistics)
+- **Amaan Malik** — Data Engineering Collaborator (Helped with raw image dataset collection and structuring)
